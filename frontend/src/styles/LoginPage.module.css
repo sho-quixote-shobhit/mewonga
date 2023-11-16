@@ -1,0 +1,87 @@
+.googleContainer{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 65%;
+    height: 50px;
+    background-color: rgb(77, 157, 184);
+    position: relative;
+    color: white;
+    font-family: "Poppins", sans-serif;
+    font-size: 13px;
+    cursor: pointer;
+    border: 1px solid black;
+    border-radius: 20px;
+    margin: 0;
+}
+
+.googleContainer img {
+    width: 10%;
+    height: 100%;
+    object-fit: contain;
+    left : 10px;
+    border-radius: 50%;
+    position: absolute;
+}
+
+.loginPage {
+    width: 100vw;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+/* .loginForm {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    max-width: 25vw;
+    min-height: 60vh;   
+    margin: 100px auto 0 auto;
+} */
+
+.twitterContainer{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 65%;
+    height: 50px;
+    background-color: rgb(131, 215, 243);
+    position: relative;
+    color: white;
+    font-family: "Poppins", sans-serif;
+    font-size: 13px;
+    cursor: pointer;
+    border: 1px solid black;
+    border-radius: 20px;
+}
+
+.twitterContainer img {
+    width: 10%;
+    height: 100%;
+    object-fit: contain;
+    left : 10px;
+    border-radius: 3px;
+    position: absolute;
+}
+
+.inputcontainer {
+    display: inline-block;
+    position: relative;
+    overflow: hidden;
+    background-color: #007BFF; 
+    color: #fff;
+    border-radius: 5px;
+    cursor: pointer;
+    margin-bottom: 10px;
+}
+
+.inputlabel {
+    display: block;
+    padding: 10px 20px; 
+    font-size: 16px;
+    text-align: center;
+    cursor: pointer;
+}

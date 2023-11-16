@@ -1,0 +1,7 @@
+.each{
+    transition: all 0.3s;
+}
+
+.each:hover{
+    transform: scale(1.15);
+}
