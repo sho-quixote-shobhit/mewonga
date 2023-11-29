@@ -52,6 +52,8 @@ const profileRoute = require('./routes/profileRoutes')
 app.use('/profile' , profileRoute)
 const otherRoutes = require('./routes/otherRoutes')
 app.use('/other',otherRoutes)
+const chapterRoutes = require('./routes/chapterRoutes')
+app.use('/chapter' , chapterRoutes)
 
 
 //passport
@@ -63,7 +65,7 @@ app.use(passport.session());
 //getuser
 app.get("/getuser", async (req, res) => {
     if (req.user) {
-        const current_user = await User.findById(req.user._id).populate('mangas');
+        const current_user = await User.findById(req.user._id)
         res.status(201).json(current_user)
     }
 })

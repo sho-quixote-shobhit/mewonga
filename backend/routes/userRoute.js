@@ -21,7 +21,7 @@ passport.use(new GoogleStrategy({
                 const new_user = new User({
                     googleId: profile.id,
                     username: profile.given_name,
-                    dp: profile.photos[0].value
+                    // dp: profile.photos[0].value
                 })
                 await new_user.save()
                 return done(null, new_user)
@@ -59,7 +59,7 @@ passport.use(new TwitterStrategy({
                 const new_user = new User({
                     twitterId: profile.id,
                     username: profile.displayName,
-                    dp: profile.photos[0].value
+                    // dp: profile.photos[0].value
                 })
                 await new_user.save()
                 return cb(null, new_user)

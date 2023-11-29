@@ -1,8 +1,8 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import Modal from 'react-bootstrap/Modal';
 import Button from 'react-bootstrap/Button';
 import axios from 'axios';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import styles from '../styles/UserPage.module.css'
@@ -31,7 +31,20 @@ const UserPage = () => {
 
     const userId = userData._id;
     const username = userData.username;
-    const all_mangas = userData.mangas;
+    // const all_mangas = userData.mangas;
+
+    const [all_mangas, setall_mangas] = useState([])
+
+    const {id} = useParams();
+
+    useEffect(() => {
+        const fetchMangasByUser = async()=>{
+            const response = await axios.post('http://localhost:5000/manga/byuser' , {id} , {withCredentials : true});
+            setall_mangas(response.data)
+        }
+        fetchMangasByUser();
+    }, [id])
+    
 
     //modal of edit 
     const [show1, setShow1] = useState(false);
@@ -189,6 +202,10 @@ const UserPage = () => {
         })
     }
 
+    const ViewManga = (mangaid)=>{
+        navigate(`/${mangaid}/chapters`)
+    }
+
     return (
         <>
             {/* modal to edit profile */}
@@ -256,10 +273,10 @@ const UserPage = () => {
                         </div>
                         <div className="mb-2">
                             <label className="form-label fw-bold" style={{ color: "black" }} htmlFor="status">Change Status</label>
-                            <select className="form-select"  aria-label="Default select example" required>
-                                <option value="Ongoing" onSelect={(e) => { setstatus(e.target.value) }}>Ongoing</option>
-                                <option value="Completed" onSelect={(e) => { setstatus(e.target.value) }}>Completed</option>
-                            </select>
+                            <select className="form-select" aria-label="Default select example" value={status} onChange={(e) => { setstatus(e.target.value) }}>
+                                    <option value="Ongoing">Ongoing</option>
+                                    <option value="Completed">Completed</option>
+                                </select>
                         </div>
                         <Button variant="outline-primary" type='submit' style={{ fontWeight: "bold" }} onClick={handleUpdateManga}>
                             Save
@@ -276,7 +293,7 @@ const UserPage = () => {
                             <div className="card-body text-center">
                                 <div className="mt-3 mb-4">
                                     <img src={userData.dp || `data:image/png;base64,${userData.dp}`}
-                                        className="rounded-circle img-fluid" alt='profile pic' style={{ width: "100px" }} />
+                                        className="img-fluid" alt='' width="100vw" height="90vh" style={{borderRadius : "50%" , minHeight : "90px"}} />
                                 </div>
                                 <h2 className="my-4 fw-bold" style={{ color: "black" }}>{userData.username}</h2>
                                 <h5 className="mt-4 fw-bold" style={{ color: "black" }}>Total Manga</h5>
@@ -300,13 +317,14 @@ const UserPage = () => {
                         {all_mangas.map((manga) => {
                             return (
                                 <>
-                                    <div key={manga._id} className={`${styles.each} col-lg-4 col-md-6 col-sm-12`}>
+                                    <div key={manga._id} className={`${styles.each} col-lg-4 col-md-6 col-sm-12`} >
                                         <div className="card border-0 d-flex justify-content-center align-items-center my-3 m-auto" style={{ width: "15rem", borderRadius: "20px" }}>
-                                            <img src={manga.cover} className="card-img-top img-fluid " style={{ width: "220px", height: "220px", borderRadius: "20px" }} alt="..." />
+                                            <img src={manga.cover} className="card-img-top img-fluid " onClick={() =>{ViewManga(manga._id)}} style={{ width: "220px", height: "220px", borderRadius: "20px" , cursor : "pointer" }} alt="..." />
                                             <div className="card-body p-1">
-                                                <h4 style={{ color: "black", fontWeight: "bold" }} className='p-0' >{manga.title}</h4>
+                                                <h4 style={{ color: "black", fontWeight: "bold" }} className='p-0 text-center'  >{manga.title}</h4>
+                                                <p style={{ color: "black", fontWeight: "bold" }} className='text-center p-0 m-0'>{manga.status}</p>
                                                 <div className='d-flex flex-column justify-content-center align-items-center'>
-                                                    <button className='btn btn-sm btn-outline-primary my-1 fw-bold' onClick={() => { handlenewchapterclink(manga._id, manga.chapters.length, manga.title) }}>New Chapter</button>
+                                                    <button className='btn btn-sm btn-outline-primary my-1 fw-bold' onClick={() => { handlenewchapterclink(manga._id, manga.chapters.length, manga.title) }} disabled = {manga.status === 'Ongoing' ? false : true} >New Chapter</button>
                                                     <button className='btn btn-sm btn-outline-secondary my-1 fw-bold' onClick={() => { handleUpdateClick(manga._id, manga.title, manga.status, manga.desc) }} >Edit Manga !!</button>
                                                 </div>
                                             </div>
@@ -318,6 +336,7 @@ const UserPage = () => {
                     </div>
 
                 </div>
+                <hr style={{ borderTop: '2px dotted ' }}></hr>
             </div>
         </>
     )

@@ -1,0 +1,12 @@
+.star {
+    cursor: pointer;
+}
+
+.star:hover,
+.star.hovered {
+    color: gold;
+}
+
+.fire{
+    color : red
+}

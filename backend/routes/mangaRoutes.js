@@ -5,7 +5,7 @@ const multer = require('multer')
 const path = require('path')
 const fs = require('fs');
 const { exec } = require('child_process');
-
+const axios = require('axios')
 
 //models
 const User = require('../models/user')
@@ -25,7 +25,7 @@ const storage = multer.diskStorage({
         cb(null, extname);
     },
 });
-const upload = multer({ storage: storage });
+const upload = multer({ storage: storage, limits: { fieldSize: 25 * 1024 * 1024 } });
 
 
 //upload manga and 1 chapter
@@ -46,7 +46,7 @@ router.post('/upload', upload.single('pdf'), asyncHandler(async (req, res, next)
                 fs.mkdirSync(outputDirectory);
             }
 
-            //using exec to convert pdf to images first and store those images in temp then converting them to base64 images
+            //using exec and pdftoppm to convert pdf to images first and store those images in temp then converting them to base64 images
             //separate each image of pdf and convert then to base64
             exec(`pdftoppm -jpeg ${pdfPath} ${path.join(outputDirectory, 'page')}`, async (error, stdout, stderr) => {
                 const pageImagesBase64 = []; // storing all the images of pdf in this array in base64 strings
@@ -67,6 +67,8 @@ router.post('/upload', upload.single('pdf'), asyncHandler(async (req, res, next)
                 //delete the chapter.pdf
                 fs.unlinkSync(pdfPath);
                 const manga_genres = genres.split(',');
+
+                const genres_to_upload = [manga_genres]
 
                 //creating new manga
                 const new_manga = new Manga({
@@ -110,8 +112,26 @@ router.post('/upload', upload.single('pdf'), asyncHandler(async (req, res, next)
                 const user = await User.findById(userId).exec();
                 user.mangas.push(new_manga);
                 await user.save();
+
+                const author_to_upload = "[" + user.username + ",]"
+
+
+                const UploadObj = {
+                    "on_action": "update",
+                    "manga": {
+                        "mangaid": new_manga._id,
+                        "title": title,
+                        "desc": desc,
+                        "genres": genres_to_upload,
+                        "author": author_to_upload
+                    }
+                }
+
+                const apiResponse = await axios.post('http://127.0.0.1:8080/mangarecommendor', { ...UploadObj })
+                console.log(apiResponse)
+
             });
-            
+
             res.json({ msg: "ok" })
         }
     } catch (error) {
@@ -220,7 +240,7 @@ router.post('/search', asyncHandler(async (req, res) => {
             });
         }
 
-        const filtered_search = filterStringsBySimilarity(search, manga_titles, 30);
+        const filtered_search = filterStringsBySimilarity(search, manga_titles, 50);
 
         let matched_searches = [];
         filtered_search.forEach(async (matched) => {
@@ -238,26 +258,116 @@ router.post('/search', asyncHandler(async (req, res) => {
 }))
 
 router.post('/update', asyncHandler(async (req, res) => {
-    const {newTitle , newDesc , status , mangaId , userId} = req.body;
+    const { newTitle, newDesc, status, mangaId, userId } = req.body;
     try {
-        if(!newTitle || !newDesc || !status || !mangaId || !userId){
+        if (!newTitle || !newDesc || !status || !mangaId || !userId) {
             res.json({ msg: "Data incomplete" })
         }
-        else{
-            const current_manga = await Manga.findByIdAndUpdate(mangaId , {
-                title : newTitle,
-                desc : newDesc,
+        else {
+            const current_manga = await Manga.findByIdAndUpdate(mangaId, {
+                title: newTitle,
+                desc: newDesc,
                 status
             })
             await current_manga.save();
-            res.json({msg : "ok"})
+            res.json({ msg: "ok" })
         }
     } catch (error) {
         res.json({ msg: "Server Error" })
     }
 }))
 
+router.post('/chapters', asyncHandler(async (req, res) => {
+    const { id, userId } = req.body;
+    if (!id) {
+        return res.json({ msg: "No Manga" })
+    }
+    try {
+        if (userId) {
+            const manga = await Manga.findById(id);
+            const user = await User.findById(userId);
+            if (!user.visited.includes(manga._id)) {
+                user.visited.push(manga);
+                await user.save();
+            }
+        }
+        const mangaContent = await Manga.findById(id).populate('chapters').populate('author').populate('genres').populate({ path: 'comments', populate: { path: 'author' } })
+        const sendObj = {
+            "on_action": "recommend",
+            "mangaid": id
+        }
+        const relatedContentObj = await axios.post('http://127.0.0.1:8080/mangarecommendor', { ...sendObj })
+        const realtedArray = (relatedContentObj.data.recommendation)
 
+        let mangaDetails = [];
+        for (const [mangaId, similarity] of realtedArray) {
+            const manga = await Manga.findById(mangaId);
+            mangaDetails.push({
+                title: manga.title,
+                _id: manga._id,
+                cover: manga.cover
+            })
+        }
+        console.log(mangaDetails);
+        for (let manga of mangaDetails) {
+            console.log(manga)
+        }
+
+        const responseData = {
+            mangaContent,
+            mangaDetails
+        };
+
+        res.json(responseData);
+    } catch (error) {
+        console.log(error)
+        res.json({ msg: `Server Error ${error}` })
+    }
+}))
+
+router.post('/rating', asyncHandler(async (req, res) => {
+    const { id, selectedRating, userId } = req.body;
+    if (!id || !selectedRating || !userId) {
+        return res.json({ msg: "data incomplete" })
+    }
+
+    try {
+        const manga = await Manga.findById(id);
+        if (manga.rating == 0) {
+            const updatedManga = await Manga.findByIdAndUpdate(id, {
+                rating: selectedRating
+            })
+            await updatedManga.save();
+            res.json({ msg: "ok" })
+        } else {
+            const newRating = ((manga.rating + selectedRating) / 2);
+            const updatedManga = await Manga.findByIdAndUpdate(id, {
+                rating: newRating
+            })
+            await updatedManga.save();
+            res.json({ msg: "ok" })
+        }
+    } catch (error) {
+        console.log(error)
+        res.json({ msg: "Server error" })
+    }
+}))
+
+router.post('/byuser', asyncHandler(async (req, res) => {
+    const { id } = req.body;
+    if (!id) {
+        return res.json({ msg: "User not logged in" })
+    }
+    try {
+        const user = await User.findById(id).populate('mangas');
+        const mangasByUser = user.mangas;
+
+        res.send(mangasByUser)
+    } catch (error) {
+        console.log(error);
+        res.json({msg : "server error"})
+    }
+}))
 
 
 module.exports = router

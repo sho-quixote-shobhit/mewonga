@@ -27,7 +27,7 @@ const UploadManga = () => {
     const [title, settitle] = useState("");
     const [desc, setdesc] = useState("");
     const [cover, setcover] = useState("");
-    const [status, setstatus] = useState("Ongoing");
+    const [status, setstatus] = useState("");
     const [genres, setgenres] = useState([]);
     const [chapName, setchapName] = useState("");
     const chapNumber = 1;
@@ -36,6 +36,7 @@ const UploadManga = () => {
 
     const onsubmit = async (e) => {
         e.preventDefault();
+        console.log(status)
         let formData = new FormData();
         formData.append("pdf", file)
         formData.append("title", title)
@@ -54,19 +55,19 @@ const UploadManga = () => {
             },
         }, { withcreadentials: true }).then(res => {
             if (res.data.msg === 'ok') {
-                toast.success('Manga Uploaded',{
-                    position : "top-center",
-                    autoClose : 1000,
-                    closeOnClick : false
+                toast.success('Manga Uploaded', {
+                    position: "top-center",
+                    autoClose: 1000,
+                    closeOnClick: false
                 })
                 setTimeout(() => {
                     navigate('/');
                     window.location.reload('/')
                 }, 1200);
             } else {
-                toast("Data Incomplete !!" , {
-                    position : "top-center",
-                    autoClose : 1500,
+                toast("Data Incomplete !!", {
+                    position: "top-center",
+                    autoClose: 1500,
                 })
             }
         })
@@ -97,55 +98,56 @@ const UploadManga = () => {
                         <div className="col-8 offset-2">
 
                             <div className="mb-2">
-                                <label className="form-label fw-bold" htmlFor="title">Title</label>
+                                <label className="form-label fw-bold" style={{fontSize : "22px"}} htmlFor="title">Title</label>
                                 <input className="form-control" type="text" autoComplete='off' onChange={(e) => { settitle(e.target.value) }} id="" required />
                             </div>
 
                             <div className="mb-2">
-                                <label htmlFor="description" className="form-label fw-bold">Description</label>
+                                <label htmlFor="description" style={{fontSize : "22px"}} className="form-label fw-bold">Description</label>
                                 <textarea className="form-control" rows="5" onChange={(e) => { setdesc(e.target.value) }} required />
                             </div>
 
                             <div className="mb-2">
-                                <label className="form-label fw-bold" htmlFor="photo">Cover Photo (.jpeg , .png , .jpg)</label>
+                                <label className="form-label fw-bold" style={{fontSize : "22px"}} htmlFor="photo">Cover Photo (.jpeg , .png , .jpg)</label>
                                 <input className="form-control" type="file" accept='.jpg, .jpeg, .png' onChange={(e) => handleCoverUpload(e)} required />
                             </div>
 
                             <div className="mb-2">
-                                <label className="form-label fw-bold" htmlFor="status">Status</label>
-                                <select className="form-select" aria-label="Default select example" required>
-                                    <option value="Ongoing" onSelect={(e) => { setstatus(e.target.value) }}>Ongoing</option>
-                                    <option value="Completed" onSelect={(e) => { setstatus(e.target.value) }}>Completed</option>
+                                <label className="form-label fw-bold" style={{fontSize : "22px"}} htmlFor="status">Status</label>
+                                <select className="form-select" aria-label="Default select example" required onChange={(e) => { setstatus(e.target.value) }}>
+                                    <option value="">Select Status</option>
+                                    <option value="Ongoing">Ongoing</option>
+                                    <option value="Completed">Completed</option>
                                 </select>
                             </div>
- 
+
                             {/* genres  */}
 
                             <div className="mb-2">
-                                <h6 className="form-label fw-bold" htmlFor="title">Genres</h6>
+                                <h6 className="form-label fw-bold" htmlFor="title" style={{fontSize : "22px"}}>Genres</h6>
                                 <div className="form-check form-check-inline">
                                     <input className="form-check-input" onChange={(e) => { handleGenre(e) }} type="checkbox" id="inlineCheckbox1" value="Action" required />
                                     <label className="form-check-label" htmlFor="inlineCheckbox1" >Action</label>
                                 </div>
 
                                 <div className="form-check form-check-inline">
-                                    <input className="form-check-input" onChange={(e) => { handleGenre(e) }} type="checkbox" id="inlineCheckbox2" value="Adventure" required/>
+                                    <input className="form-check-input" onChange={(e) => { handleGenre(e) }} type="checkbox" id="inlineCheckbox2" value="Adventure" required />
                                     <label className="form-check-label" htmlFor="inlineCheckbox2">Adventure</label>
                                 </div>
                                 <div className="form-check form-check-inline">
-                                    <input className="form-check-input" onChange={(e) => { handleGenre(e) }} type="checkbox" id="inlineCheckbox2" value="Award Winning" required/>
+                                    <input className="form-check-input" onChange={(e) => { handleGenre(e) }} type="checkbox" id="inlineCheckbox2" value="Award Winning" required />
                                     <label className="form-check-label" htmlFor="inlineCheckbox2">Award Winning</label>
                                 </div>
                                 <div className="form-check form-check-inline">
-                                    <input className="form-check-input" onChange={(e) => { handleGenre(e) }} type="checkbox" id="inlineCheckbox2" value="Drama" required/>
+                                    <input className="form-check-input" onChange={(e) => { handleGenre(e) }} type="checkbox" id="inlineCheckbox2" value="Drama" required />
                                     <label className="form-check-label" htmlFor="inlineCheckbox2">Drama</label>
                                 </div>
                                 <div className="form-check form-check-inline">
-                                    <input className="form-check-input" onChange={(e) => { handleGenre(e) }} type="checkbox" id="inlineCheckbox2" value="Fantasy" required/>
+                                    <input className="form-check-input" onChange={(e) => { handleGenre(e) }} type="checkbox" id="inlineCheckbox2" value="Fantasy" required />
                                     <label className="form-check-label" htmlFor="inlineCheckbox2">Fantasy</label>
                                 </div>
                                 <div className="form-check form-check-inline">
-                                    <input className="form-check-input" onChange={(e) => { handleGenre(e) }} type="checkbox" id="inlineCheckbox2" value="Horror" required/>
+                                    <input className="form-check-input" onChange={(e) => { handleGenre(e) }} type="checkbox" id="inlineCheckbox2" value="Horror" required />
                                     <label className="form-check-label" htmlFor="inlineCheckbox2">Horror</label>
                                 </div>
                                 <div className="form-check form-check-inline">
@@ -153,36 +155,36 @@ const UploadManga = () => {
                                     <label className="form-check-label" htmlFor="inlineCheckbox2">Supernatural</label>
                                 </div>
                                 <div className="form-check form-check-inline">
-                                    <input className="form-check-input" onChange={(e) => { handleGenre(e) }} type="checkbox" id="inlineCheckbox2" value="Girls Love" required/>
+                                    <input className="form-check-input" onChange={(e) => { handleGenre(e) }} type="checkbox" id="inlineCheckbox2" value="Girls Love" required />
                                     <label className="form-check-label" htmlFor="inlineCheckbox2">Girls Love</label>
                                 </div>
                                 <div className="form-check form-check-inline">
-                                    <input className="form-check-input" onChange={(e) => { handleGenre(e) }} type="checkbox" id="inlineCheckbox2" value="Ecchi" required/>
+                                    <input className="form-check-input" onChange={(e) => { handleGenre(e) }} type="checkbox" id="inlineCheckbox2" value="Ecchi" required />
                                     <label className="form-check-label" htmlFor="inlineCheckbox2">Ecchi</label>
                                 </div>
 
                                 <div className="form-check form-check-inline">
-                                    <input className="form-check-input" onChange={(e) => { handleGenre(e) }} type="checkbox" id="inlineCheckbox2" value="Comedy" required/>
+                                    <input className="form-check-input" onChange={(e) => { handleGenre(e) }} type="checkbox" id="inlineCheckbox2" value="Comedy" required />
                                     <label className="form-check-label" htmlFor="inlineCheckbox2">Comedy</label>
                                 </div>
                                 <div className="form-check form-check-inline">
-                                    <input className="form-check-input" onChange={(e) => { handleGenre(e) }} type="checkbox" id="inlineCheckbox2" value="Slice of Life"  required/>
+                                    <input className="form-check-input" onChange={(e) => { handleGenre(e) }} type="checkbox" id="inlineCheckbox2" value="Slice of Life" required />
                                     <label className="form-check-label" htmlFor="inlineCheckbox2">Slice of Life</label>
                                 </div>
                                 <div className="form-check form-check-inline">
-                                    <input className="form-check-input" onChange={(e) => { handleGenre(e) }} type="checkbox" id="inlineCheckbox2" value="Mystery"  required/>
+                                    <input className="form-check-input" onChange={(e) => { handleGenre(e) }} type="checkbox" id="inlineCheckbox2" value="Mystery" required />
                                     <label className="form-check-label" htmlFor="inlineCheckbox2">Mystery</label>
                                 </div>
                                 <div className="form-check form-check-inline">
-                                    <input className="form-check-input" onChange={(e) => { handleGenre(e) }} type="checkbox" id="inlineCheckbox2" value="Romance"  required/>
+                                    <input className="form-check-input" onChange={(e) => { handleGenre(e) }} type="checkbox" id="inlineCheckbox2" value="Romance" required />
                                     <label className="form-check-label" htmlFor="inlineCheckbox2">Romance</label>
                                 </div>
                                 <div className="form-check form-check-inline">
-                                    <input className="form-check-input" onChange={(e) => { handleGenre(e) }} type="checkbox" id="inlineCheckbox2" value="Erotica"  required/>
+                                    <input className="form-check-input" onChange={(e) => { handleGenre(e) }} type="checkbox" id="inlineCheckbox2" value="Erotica" required />
                                     <label className="form-check-label" htmlFor="inlineCheckbox2">Erotica</label>
                                 </div>
                                 <div className="form-check form-check-inline">
-                                    <input className="form-check-input" onChange={(e) => { handleGenre(e) }} type="checkbox" id="inlineCheckbox2" value="option2"  required/>
+                                    <input className="form-check-input" onChange={(e) => { handleGenre(e) }} type="checkbox" id="inlineCheckbox2" value="option2" required />
                                     <label className="form-check-label" htmlFor="inlineCheckbox2">Sports</label>
                                 </div>
                                 <div className="form-check form-check-inline">
@@ -190,11 +192,11 @@ const UploadManga = () => {
                                     <label className="form-check-label" htmlFor="inlineCheckbox2">Suspense</label>
                                 </div>
                                 <div className="form-check form-check-inline">
-                                    <input className="form-check-input" onChange={(e) => { handleGenre(e) }} type="checkbox" id="inlineCheckbox2" value="Sci-Fi"  required/>
+                                    <input className="form-check-input" onChange={(e) => { handleGenre(e) }} type="checkbox" id="inlineCheckbox2" value="Sci-Fi" required />
                                     <label className="form-check-label" htmlFor="inlineCheckbox2">Sci-Fi</label>
                                 </div>
                                 <div className="form-check form-check-inline">
-                                    <input className="form-check-input" onChange={(e) => { handleGenre(e) }} type="checkbox" id="inlineCheckbox2" value="Boys Love"  required/>
+                                    <input className="form-check-input" onChange={(e) => { handleGenre(e) }} type="checkbox" id="inlineCheckbox2" value="Boys Love" required />
                                     <label className="form-check-label" htmlFor="inlineCheckbox2">Boys Love</label>
                                 </div>
 
@@ -205,28 +207,30 @@ const UploadManga = () => {
 
                             </div>
 
-                            <h5 className="form-label fw-bold my-4" htmlFor="chapter">Add Chapter</h5>
+                            <h3 className="form-label fw-bold my-4" htmlFor="chapter">Add Chapter</h3>
 
                             <div className="mb-2">
-                                <label className="form-label fw-bold" htmlFor="chapter-name">Chapter Name</label>
+                                <label className="form-label fw-bold" style={{fontSize : "22px"}} htmlFor="chapter-name">Chapter Name</label>
                                 <input className="form-control" type="text" autoComplete='off' onChange={(e) => { setchapName(e.target.value) }} id="" required />
                             </div>
 
                             <div className="mb-2">
-                                <label className="form-label fw-bold" htmlFor="chapter-name">Chapter Number</label>
+                                <label className="form-label fw-bold" style={{fontSize : "22px"}} htmlFor="chapter-name">Chapter Number</label>
                                 <input className="form-control" type="number" min="1" value={chapNumber} autoComplete='off' id="" />
                             </div>
 
                         </div>
                         <div className="mb-2 col-8 offset-2">
-                            <label className="form-label fw-bold" htmlFor="chapter-name">Select Chapter ( .pdf only) </label>
+                            <label className="form-label fw-bold" style={{fontSize : "22px"}} htmlFor="chapter-name">Select Chapter ( .pdf only) </label>
                             <input className="form-control" type="file" accept='.pdf' onChange={(e) => { setfile(e.target.files[0]) }} required />
-                            <button className="btn btn-success mt-3" onClick={(e) => { onsubmit(e) }} type="submit">Upload</button>
+                            <button className="btn btn-success mt-3 fw-bold px-4" style={{borderRadius : "30px" , color : "black"}} onClick={(e) => { onsubmit(e) }} type="submit">Upload</button>
                         </div>
                     </form>
 
                 </div>
+                <hr style={{ borderTop: '2px dotted ' }}></hr>
             </div>
+            
         </>
     )
 }

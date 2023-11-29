@@ -25,7 +25,7 @@ const CreateCharacter = () => {
   return (
     <div className='container d-flex flex-column justify-content-center align-items-center'>
       <div className='d-flex align-items-center mt-5 p-2'>
-        {!loading && <button className='btn btn-primary text-center fw-bold' onClick={create}>Create Character</button>}
+        {!loading && <button className='btn btn-light text-center fw-bold' style={{borderRadius : "30px" , color : "black"}} onClick={create}>Create Character</button>}
         {loading && (
           <div style={{ marginLeft: '10px' }}>
             <TailSpin type="TailSpin" color="#007BFF" height={30} width={30} />
@@ -36,7 +36,7 @@ const CreateCharacter = () => {
       {image && (
         <div className='d-flex flex-column justify-content-center align-items-center'>
           <img src={`data:image/jpeg;base64,${image}`} className='my-4' alt="" />
-          <button className='btn btn-primary fw-bold' onClick={handleDownload}>Download</button>
+          <button className='btn btn-light fw-bold' style={{borderRadius : "30px" , color : "black"}} onClick={handleDownload}>Download</button>
         </div>
       )}
     </div>
