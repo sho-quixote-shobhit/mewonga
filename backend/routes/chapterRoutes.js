@@ -36,8 +36,6 @@ router.post('/colorize', asyncHandler(async(req, res) => {
 
     const reversedProcessedImages = coloredObj.data.processed_images.reverse();
 
-    console.log(reversedProcessedImages)
-
     res.send(reversedProcessedImages);
 }));
 

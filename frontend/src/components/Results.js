@@ -25,16 +25,13 @@ const Results = () => {
 
     return (
         <>
-
             <div className="container my-5">
-
                 <div className="row ">
                     <h1 className='text-center fw-bold'>Manga</h1>
                     <p className='text-center fw-bold'>Related to your search</p>
                     {results.map((manga) => {
                         return (
-                            <>
-                                <div className = {`${styles.each} col-lg-4 col-md-6 col-sm-12`} onClick={()=>{submit(manga._id)}}>
+                                <div className = {`${styles.each} col-lg-4 col-md-6 col-sm-12`} onClick={()=>{submit(manga._id)}} key={manga._id}>
                                     <div className="card border-0 d-flex justify-content-center align-items-center my-3 m-auto" style={{ width: "17rem" , cursor : "pointer" , borderRadius : "20px" }}>
                                         <img src={manga.cover}  className="card-img-top img-fluid " style={{ width: "260px", height: "260px" , borderRadius : "5%"}} alt="..." />
                                         <div className="card-body p-1">
@@ -46,7 +43,7 @@ const Results = () => {
 
                                     </div>
                                 </div>
-                            </>)
+                            )
                     })}
                 </div>
 

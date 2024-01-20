@@ -15,7 +15,6 @@ const HomePage = () => {
     }
 
     const [topmangas, settopmangas] = useState([])
-    // const [relatedmanga, setrelatedmanga] = useState([])
 
     const navigate = useNavigate();
 
@@ -23,42 +22,25 @@ const HomePage = () => {
 
         const fetchtopMangas = async () => {
             const response = await axios.get('http://localhost:5000/other/topmanga')
-            console.log(response.data);
             settopmangas(response.data)
-        }
+        }   
 
-        // const interestedMangas = async() =>{
-
-        // }
-
-        if (!userId) {
-            fetchtopMangas();
-        } else {
-            fetchtopMangas();
-        }
+        fetchtopMangas()
     }, [userId])
 
 
     const onsubmit = async (e) => {
         e.preventDefault()
-        // await axios.post('http://localhost:5000/manga/search', { search }, { withCredentials: true }).then(res => {
-        //     if (res.data) {
-        //         window.localStorage.setItem('results', JSON.stringify(res.data));
-        //         navigate(`/${formattedSearch}/results`)
-        //     }
-        // })
         navigate(`/${formattedSearch}/results`)
     }
 
     const handletopmangaclick = (mangaid) => {
         navigate(`/${mangaid}/chapters`)
-        window.location.reload()
     }
 
     return (
         <>
 
-            {window.localStorage.removeItem('results')}
             <div className="container d-flex flex-column justify-content-center align-items-center" style={{ "minHeight": "50vh" }}>
 
                 <h1 className='text-center fw-bold'>Search for Manga</h1>
@@ -74,15 +56,6 @@ const HomePage = () => {
 
             </div>
 
-            {/* 
-            {userData && userData.visited.length ? <div className="container" >
-
-                <div className="container" style={{ "maxWidth": "50vw" }}>
-                    <h3 className='text-center fw-bold'>Top Rated Manga</h3>
-                </div>
-
-            </div> : <></>} */}
-
             <div className='container'>
 
                 <h2 className='text-center fw-bold mb-4'>Top Rated Manga</h2>
@@ -90,7 +63,6 @@ const HomePage = () => {
 
                     {topmangas.map((manga) => {
                         return (
-                            <>
                                 <div key={manga._id} className={`${styles2.each} col-lg-3 col-md-4 col-sm-12`} onClick={() => { handletopmangaclick(manga._id) }}>
                                     <div className="card border-0 d-flex justify-content-center align-items-center my-3 m-auto" style={{ width: "12rem", cursor: "pointer", borderRadius: "20px" }}>
                                         <img src={manga.cover} className="card-img-top img-fluid " style={{ width: "300px", height: "230px", borderRadius: "5%" }} alt="..." />
@@ -101,7 +73,7 @@ const HomePage = () => {
 
                                     </div>
                                 </div>
-                            </>)
+                            )
                     })}
                 </div>
                 <hr style={{ borderTop: '2px dotted ' }}></hr>

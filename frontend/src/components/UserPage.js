@@ -316,7 +316,6 @@ const UserPage = () => {
                         <h2 className='text-center fw-bold'>Manga By You</h2>
                         {all_mangas.map((manga) => {
                             return (
-                                <>
                                     <div key={manga._id} className={`${styles.each} col-lg-4 col-md-6 col-sm-12`} >
                                         <div className="card border-0 d-flex justify-content-center align-items-center my-3 m-auto" style={{ width: "15rem", borderRadius: "20px" }}>
                                             <img src={manga.cover} className="card-img-top img-fluid " onClick={() =>{ViewManga(manga._id)}} style={{ width: "220px", height: "220px", borderRadius: "20px" , cursor : "pointer" }} alt="..." />
@@ -331,7 +330,7 @@ const UserPage = () => {
 
                                         </div>
                                     </div>
-                                </>)
+                                )
                         })}
                     </div>
 

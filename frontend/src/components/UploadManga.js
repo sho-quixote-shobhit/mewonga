@@ -99,12 +99,12 @@ const UploadManga = () => {
 
                             <div className="mb-2">
                                 <label className="form-label fw-bold" style={{fontSize : "22px"}} htmlFor="title">Title</label>
-                                <input className="form-control" type="text" autoComplete='off' onChange={(e) => { settitle(e.target.value) }} id="" required />
+                                <input className="form-control" value={title} type="text" autoComplete='off' onChange={(e) => { settitle(e.target.value) }} id="" required />
                             </div>
 
                             <div className="mb-2">
                                 <label htmlFor="description" style={{fontSize : "22px"}} className="form-label fw-bold">Description</label>
-                                <textarea className="form-control" rows="5" onChange={(e) => { setdesc(e.target.value) }} required />
+                                <textarea className="form-control" value={desc} rows="5" onChange={(e) => { setdesc(e.target.value) }} required />
                             </div>
 
                             <div className="mb-2">
@@ -184,7 +184,7 @@ const UploadManga = () => {
                                     <label className="form-check-label" htmlFor="inlineCheckbox2">Erotica</label>
                                 </div>
                                 <div className="form-check form-check-inline">
-                                    <input className="form-check-input" onChange={(e) => { handleGenre(e) }} type="checkbox" id="inlineCheckbox2" value="option2" required />
+                                    <input className="form-check-input" onChange={(e) => { handleGenre(e) }} type="checkbox" id="inlineCheckbox2" value="Sports" required />
                                     <label className="form-check-label" htmlFor="inlineCheckbox2">Sports</label>
                                 </div>
                                 <div className="form-check form-check-inline">
@@ -211,12 +211,12 @@ const UploadManga = () => {
 
                             <div className="mb-2">
                                 <label className="form-label fw-bold" style={{fontSize : "22px"}} htmlFor="chapter-name">Chapter Name</label>
-                                <input className="form-control" type="text" autoComplete='off' onChange={(e) => { setchapName(e.target.value) }} id="" required />
+                                <input className="form-control" type="text" autoComplete='off' value={chapName} onChange={(e) => { setchapName(e.target.value) }} id="" required />
                             </div>
 
                             <div className="mb-2">
                                 <label className="form-label fw-bold" style={{fontSize : "22px"}} htmlFor="chapter-name">Chapter Number</label>
-                                <input className="form-control" type="number" min="1" value={chapNumber} autoComplete='off' id="" />
+                                <input className="form-control" type="number" min="1" value={chapNumber} autoComplete='off' onChange={()=>{}} id="" />
                             </div>
 
                         </div>

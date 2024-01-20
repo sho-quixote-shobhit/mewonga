@@ -113,23 +113,6 @@ router.post('/upload', upload.single('pdf'), asyncHandler(async (req, res, next)
                 user.mangas.push(new_manga);
                 await user.save();
 
-                const author_to_upload = "[" + user.username + ",]"
-
-
-                const UploadObj = {
-                    "on_action": "update",
-                    "manga": {
-                        "mangaid": new_manga._id,
-                        "title": title,
-                        "desc": desc,
-                        "genres": genres_to_upload,
-                        "author": author_to_upload
-                    }
-                }
-
-                const apiResponse = await axios.post('http://127.0.0.1:8080/mangarecommendor', { ...UploadObj })
-                console.log(apiResponse)
-
             });
 
             res.json({ msg: "ok" })
@@ -283,42 +266,8 @@ router.post('/chapters', asyncHandler(async (req, res) => {
         return res.json({ msg: "No Manga" })
     }
     try {
-        if (userId) {
-            const manga = await Manga.findById(id);
-            const user = await User.findById(userId);
-            if (!user.visited.includes(manga._id)) {
-                user.visited.push(manga);
-                await user.save();
-            }
-        }
         const mangaContent = await Manga.findById(id).populate('chapters').populate('author').populate('genres').populate({ path: 'comments', populate: { path: 'author' } })
-        const sendObj = {
-            "on_action": "recommend",
-            "mangaid": id
-        }
-        const relatedContentObj = await axios.post('http://127.0.0.1:8080/mangarecommendor', { ...sendObj })
-        const realtedArray = (relatedContentObj.data.recommendation)
-
-        let mangaDetails = [];
-        for (const [mangaId, similarity] of realtedArray) {
-            const manga = await Manga.findById(mangaId);
-            mangaDetails.push({
-                title: manga.title,
-                _id: manga._id,
-                cover: manga.cover
-            })
-        }
-        console.log(mangaDetails);
-        for (let manga of mangaDetails) {
-            console.log(manga)
-        }
-
-        const responseData = {
-            mangaContent,
-            mangaDetails
-        };
-
-        res.json(responseData);
+        res.json(mangaContent)
     } catch (error) {
         console.log(error)
         res.json({ msg: `Server Error ${error}` })
@@ -334,18 +283,18 @@ router.post('/rating', asyncHandler(async (req, res) => {
     try {
         const manga = await Manga.findById(id);
         if (manga.rating == 0) {
-            const updatedManga = await Manga.findByIdAndUpdate(id, {
+            await Manga.findByIdAndUpdate(id, {
                 rating: selectedRating
+            },{new:true}).populate('chapters').populate('author').populate('genres').populate({ path: 'comments', populate: { path: 'author' } }).then(mangaContent=>{
+                res.json(mangaContent)
             })
-            await updatedManga.save();
-            res.json({ msg: "ok" })
         } else {
             const newRating = ((manga.rating + selectedRating) / 2);
-            const updatedManga = await Manga.findByIdAndUpdate(id, {
+            await Manga.findByIdAndUpdate(id, {
                 rating: newRating
+            },{new : true}).populate('chapters').populate('author').populate('genres').populate({ path: 'comments', populate: { path: 'author' } }).then(mangaContent=>{
+                res.json(mangaContent)
             })
-            await updatedManga.save();
-            res.json({ msg: "ok" })
         }
     } catch (error) {
         console.log(error)

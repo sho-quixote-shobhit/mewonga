@@ -34,10 +34,12 @@ router.post('/comment', asyncHandler(async (req, res) => {
             author: userId
         })
         await new_comment.save();
-        const manga = await Manga.findById(id);
-        manga.comments.push(new_comment);
-        await manga.save();
-        res.json(new_comment);
+        await Manga.findByIdAndUpdate(id , {
+            $push : {comments : new_comment}
+        } , {new : true}).populate('chapters').populate('author').populate('genres').populate({ path: 'comments', populate: { path: 'author' } }).then((mangaContent)=>{
+            res.json(mangaContent)
+        })
+       
     } catch (error) {
         console.log(error)
         res.json({ msg: "server error" })
@@ -51,10 +53,12 @@ router.post('/deletecomment', asyncHandler(async (req, res) => {
         return res.json({ msg: "Data incomplete!!" })
     }
     try {
-        const updated_manga = await Manga.findByIdAndUpdate(id, { $pull: { comments: commentId } })
-        await updated_manga.save()
         await Comment.deleteOne({ _id: commentId });
-        res.json({ msg: "ok" })
+        await Manga.findByIdAndUpdate(id, { 
+            $pull: { comments: commentId } 
+        },{new : true}).populate('chapters').populate('author').populate('genres').populate({ path: 'comments', populate: { path: 'author' } }).then((mangaContent)=>{
+            res.json(mangaContent)
+        })
     } catch (error) {
         console.log(error)
         res.json({ msg: "server error" + error })

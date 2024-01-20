@@ -2,15 +2,10 @@ import React, { useContext } from 'react'
 import { myContext } from '../Context'
 import styles from '../styles/Navbar.module.css'
 
+
 const Navbar = ({ logout }) => {
 
     const userObject = useContext(myContext)
-    // const data = window.localStorage.getItem('userData');
-    // const userData = JSON.parse(data)
-    // let userId = "";
-    // if (userData) {
-    //     userId = userData._id
-    // }
     return (
         <>
             <div className="container">

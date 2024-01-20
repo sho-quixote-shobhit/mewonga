@@ -5,11 +5,10 @@ import styles from '../styles/Starts.module.css'
 import { toast } from 'react-toastify';
 import { TailSpin } from 'react-loader-spinner';
 import 'react-toastify/dist/ReactToastify.css';
-import styles2 from '../styles/UserPage.module.css'
+
 
 const Manga = () => {
     const [manga, setManga] = useState({});
-    const [realtedmanga, setrealtedmanga] = useState([])
     const { id } = useParams();
     const [username, setusername] = useState('');
     const [genresString, setGenresString] = useState('');
@@ -32,15 +31,13 @@ const Manga = () => {
         const fetchData = async () => {
             try {
                 const response = await axios.post(`http://localhost:5000/manga/chapters/`, { userId , id }, { withCredentials: true });
-                setManga(response.data.mangaContent);
-                console.log(response.data.mangaDetails)
-                setrealtedmanga(response.data.mangaDetails)
-                setchapters(response.data.mangaContent.chapters)
-                setcomments(response.data.mangaContent.comments)
-                setusername(response.data.mangaContent.author.username);
-                const genres = response.data.mangaContent.genres.map((g) => g.genre);
+                setManga(response.data);
+                setchapters(response.data.chapters)
+                setcomments(response.data.comments)
+                setusername(response.data.author.username);
+                const genres = response.data.genres.map((g) => g.genre);
                 setGenresString(genres.join(', '));
-                const updatedAt = new Date(response.data.mangaContent.updatedAt);
+                const updatedAt = new Date(response.data.updatedAt);
                 const options = {
                     year: 'numeric',
                     month: 'long',
@@ -60,11 +57,27 @@ const Manga = () => {
     //stars
     const handleRatingClick = async (selectedRating) => {
         setrating(selectedRating)
-        await axios.post('http://localhost:5000/manga/rating', { id, selectedRating, userId }, { withCredentials: true }).then(res => {
+        await axios.post('http://localhost:5000/manga/rating', { id, selectedRating, userId }, { withCredentials: true }).then(response => {
             toast("Thanks for rating !!", {
                 position: "top-center",
                 autoClose: 1500,
             })
+            setManga(response.data);
+                setchapters(response.data.chapters)
+                setcomments(response.data.comments)
+                setusername(response.data.author.username);
+                const genres = response.data.genres.map((g) => g.genre);
+                setGenresString(genres.join(', '));
+                const updatedAt = new Date(response.data.updatedAt);
+                const options = {
+                    year: 'numeric',
+                    month: 'long',
+                    day: 'numeric',
+                    hour: 'numeric',
+                    minute: 'numeric',
+                    second: 'numeric',
+                };
+                setFormattedUpdatedAt(updatedAt.toLocaleDateString('en-US', options));
         })
     };
     const renderStars = () => {
@@ -113,9 +126,25 @@ const Manga = () => {
                 return;
             }
             setLoading(true);
-            await axios.post('http://localhost:5000/other/comment', { userId, newcomment, id }, { withCredentials: true });
+            await axios.post('http://localhost:5000/other/comment', { userId, newcomment, id }, { withCredentials: true }).then(response=>{
+                setManga(response.data);
+                setchapters(response.data.chapters)
+                setcomments(response.data.comments)
+                setusername(response.data.author.username);
+                const genres = response.data.genres.map((g) => g.genre);
+                setGenresString(genres.join(', '));
+                const updatedAt = new Date(response.data.updatedAt);
+                const options = {
+                    year: 'numeric',
+                    month: 'long',
+                    day: 'numeric',
+                    hour: 'numeric',
+                    minute: 'numeric',
+                    second: 'numeric',
+                };
+                setFormattedUpdatedAt(updatedAt.toLocaleDateString('en-US', options));
+            })
             setnewcomment('');
-            window.location.reload('/:id/chapters')
         } catch (error) {
             console.error("Error adding comment:", error);
         } finally {
@@ -126,9 +155,25 @@ const Manga = () => {
     //delete comment
     const handleDelete = async (commentId) => {
         try {
-            await axios.post('http://localhost:5000/other/deletecomment', { id, commentId }, { withCredentials: true })
-            window.location.reload('/:id/chapters')
-
+            await axios.post('http://localhost:5000/other/deletecomment', { id, commentId }, { withCredentials: true }).then(response=>{
+                setManga(response.data);
+                setchapters(response.data.chapters)
+                setcomments(response.data.comments)
+                setusername(response.data.author.username);
+                const genres = response.data.genres.map((g) => g.genre);
+                setGenresString(genres.join(', '));
+                const updatedAt = new Date(response.data.updatedAt);
+                const options = {
+                    year: 'numeric',
+                    month: 'long',
+                    day: 'numeric',
+                    hour: 'numeric',
+                    minute: 'numeric',
+                    second: 'numeric',
+                };
+                setFormattedUpdatedAt(updatedAt.toLocaleDateString('en-US', options));
+            })
+           
         } catch (error) {
             console.error('Error occured', error)
         }
@@ -137,11 +182,6 @@ const Manga = () => {
     //read chapter
     const handleRead = (chapId) => {
         navigate(`/${id}/chapters/${chapId}`)
-    }
-    //realted
-    const handlerelated = (mangaid) =>{
-        navigate(`/${mangaid}/chapters`)
-        window.location.reload()
     }
 
     return (
@@ -202,27 +242,6 @@ const Manga = () => {
                                     <button onClick={(e) => { handleRead(chap._id) }} className='btn btn-sm btn-success fw-bold' style={{ borderRadius: "10px" }}>Read</button>
                                 </div>
                             )
-                        })}
-                    </div>
-                    <hr style={{ borderTop: '2px dotted ' }}></hr>
-
-                    {/* related manga */}
-                    <h4 className='fw-bold'>Related Manga</h4>
-                    <div className='row'>
-                        
-                        {realtedmanga.map((manga) => {
-                            return (
-                                <>
-                                    <div className={`${styles2.each} col-lg-3 col-md-4 col-sm-12`} onClick={() => {handlerelated(manga._id)}}>
-                                        <div className="card border-0 d-flex justify-content-center align-items-center my-3 m-auto" style={{ width: "12rem", cursor: "pointer", borderRadius: "20px" }}>
-                                            <img src={manga.cover} className="card-img-top img-fluid " style={{ width: "300px", height: "230px", borderRadius: "5%" }} alt="..." />
-                                            <div className="card-body p-1">
-                                                <h4 style={{ color: "black", fontWeight: "bold" }} className='p-0' >{manga.title}</h4>
-                                            </div>
-
-                                        </div>
-                                    </div>
-                                </>)
                         })}
                     </div>
 

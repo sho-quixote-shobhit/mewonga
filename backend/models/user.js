@@ -25,13 +25,6 @@ const userSchema = new Schema({
             ref : 'manga'
         }        
     ],
-    visited : [
-        {
-            type : Schema.Types.ObjectId,
-            ref : 'manga'
-        }
-    ]
-
 })
 
 module.exports = mongoose.model('user', userSchema)
